@@ -97,7 +97,6 @@ module StopWatch(input clk100,  dir , pb1_in, pb2_in,input [14:0]load_value,   o
   or (t, (~dir & w1),(dir & ((a[0]^dir)&(a[1]^dir)&(a[2]^dir)&(a[3]^dir))) );
   or (t1, (~dir & w2),(dir & t &((b[0]^dir)&(b[1]^dir)&(b[2]^dir)&(b[3]^dir))) );
   or (t2, (~dir & w3),(dir & t1 &((c[0]^dir)&(c[1]^dir)&(c[2]^dir)&(c[3]^dir))) );
-  //or (reset, reset1 , reset2);
   wire o_state, o_onup, o_state1,o_onup1 ;
   seven_segment_display DUT6(clk100, reset, a[3:0],b[3:0],c[3:0],d[3:0], Anode_Activate, LED_out/* ,LED_BCD*/);
   debounce DUT7(clk100,pb1_in, o_state, pb1_out, o_onup);
@@ -125,12 +124,7 @@ endmodule
 module seven_segment_display(input clk100, reset, input [3:0] a,b,c,d, output reg [3:0] Anode_Activate, output reg [6:0] LED_out/*,output reg [3:0] LED_BCD*/);
     reg [19:0] refresh_counter; 
     reg [3:0] LED_BCD;
-    // the first 18-bit for creating 2.6ms digit period
-    // the other 2-bit for creating 4 LED-activating signals
     wire [1:0] LED_activating_counter; 
-    // count        0    ->  1  ->  2  ->  3
-    // activates    LED1    LED2   LED3   LED4
-    // and repeat
     always @(posedge clk100 or posedge reset)
     begin 
         if(reset==1)
@@ -175,8 +169,6 @@ module seven_segment_display(input clk100, reset, input [3:0] a,b,c,d, output re
             end
         endcase
     end
-    //reg[6:0] LED_out;
-// Cathode patterns of the 7-segment LED display 
     always @(*)
     begin
      case(LED_BCD)
